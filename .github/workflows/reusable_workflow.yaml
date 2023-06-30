@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-workflow-A:
-    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-A.yaml
+    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-A.yaml@v1
 
   call-workflow-B:
-    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-B.yaml
+    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-B.yaml@v1
