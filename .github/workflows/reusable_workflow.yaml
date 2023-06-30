@@ -1,0 +1,13 @@
+name: Call a reusable workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  call-workflow-A:
+    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-A.yaml
+
+  call-workflow-B:
+    uses: tniita/ochacafe-github-actions/.github/workflows/workflow-B.yaml

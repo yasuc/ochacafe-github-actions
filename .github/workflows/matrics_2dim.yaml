@@ -1,0 +1,26 @@
+name: Matrics Demo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  example_matrix:
+    strategy:
+      matrix:
+        version: ["1.15", "1.14", "1.13"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start message
+        run: echo "Welcome to GitHub Actions"
+      - uses: actions/checkout@v3
+      - name: Setup Go version
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.version }}
+      - run: go run hello-world.go
+      - name: Finish message
+        run: echo "Finished running the demo"
+      - uses: actions/setup-node@v3
