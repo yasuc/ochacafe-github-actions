@@ -1,0 +1,30 @@
+name: OKE GitHub Actions Deploy Demo
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
+    steps:
+      - name: Start message
+        run: echo "Welcome to OKE GitHub Actions Deploy Demo"
+
+      - name: Configure Kubectl for Oracle Container Engine for Kubernetes (OKE)
+        uses: oracle-actions/configure-kubectl-oke@v1.3.2
+        with:
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+
+      - name: Run Kubectl
+        run: kubectl get nodes -A
+
+      - name: Finish message
+        run: echo "Finished running OKE GitHub Actions Deploy Demo"

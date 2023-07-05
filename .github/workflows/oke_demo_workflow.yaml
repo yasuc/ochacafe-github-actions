@@ -1,0 +1,59 @@
+name: OKE GitHub Actions Workflow Demo
+
+on:
+  push:
+    paths:
+      - "oke-app/*"
+  workflow_dispatch:
+
+jobs:
+  runner-job:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Start message
+        run: echo "Welcome to OKE GitHub Actions Build Demo"
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/**') }}
+          restore-keys: |
+            ${{ runner.os }}-oke-app-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image and Push ghcr
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: Container Set up for Test
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker run -d ghcr.io/${{ github.repository }}:${{ github.sha }} -p 8080:8080
+
+      - name: Container Running Test
+        uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
+
+      - name: Finish message
+        run: echo "Finished running OKE GitHub Actions Workflow Demo"
