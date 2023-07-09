@@ -1,0 +1,45 @@
+import { Table } from 'antd';
+
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'Name',
+    key: 'Name',
+  },
+  {
+    title: 'Date',
+    dataIndex: 'Date',
+    key: 'Date',
+  },
+  {
+    title: 'Topics',
+    key: 'Topics',
+    dataIndex: 'Topics',
+  },
+  {
+    title: 'Presenters',
+    key: 'Presenters',
+    dataIndex: 'Presenters',
+  }
+];
+
+export async function getStaticProps() {
+  const res = await fetch("http://" + process.env.API_URL + "/items")
+  const data = await res.json()
+  return {
+    props: {
+      data,
+    },
+    revalidate: 60 * 60 * 24
+  }
+}
+
+
+export default function Home({ data }) {
+  return (
+    <>
+      <h1>OCHaCafe Season7 Demo App</h1>
+      <Table dataSource={data} columns={columns} />;
+    </>
+  )
+}
