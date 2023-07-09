@@ -166,6 +166,7 @@ jobs:
         container-image-build-and-push-nextjs,
       ]
     runs-on: ubuntu-latest
+
     steps:
       - name: Deploy to OKE
         uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
