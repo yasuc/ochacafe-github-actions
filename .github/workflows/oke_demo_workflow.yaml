@@ -7,17 +7,86 @@ on:
   workflow_dispatch:
 
 jobs:
-  runner-job:
+  testing-backend-job:
     runs-on: ubuntu-latest
+
     services:
       redis:
-        image: redis
+        image: mysql:8
         ports:
-          - 6379:6379
+          - 3306:3306
 
     steps:
       - name: Start message
-        run: echo "Welcome to OKE GitHub Actions Build Demo"
+        run: echo "Starting Golang Test"
+
+      - uses: actions/checkout@v3
+        name: Checkout
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.19.1"
+
+      - name: Run
+        run: |
+          cd oke-app/backend-app
+          go run main.go
+
+      - name: Run Test
+        run: |
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/items`
+
+      - name: Check Test Result
+        run: |
+          if [ $CODE -eq 200 ]; then
+            echo "Success"
+          else
+            echo "Failed"
+            exit 1
+          fi
+
+      - name: Finish message
+        run: echo "Finished Golang Test"
+
+  testing-frontent-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start message
+        run: echo "Starting Nextjs Test"
+
+      - uses: actions/checkout@v3
+        name: Checkout
+
+      - name: Run
+        run: |
+          cd oke-app/frontend-app
+          npm run dev
+
+      - name: Run Test
+        run: |
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:3000`
+
+      - name: Check Test Result
+        run: |
+          if [ $CODE -eq 200 ]; then
+            echo "Success"
+          else
+            echo "Failed"
+            exit 1
+          fi
+
+      - name: Finish message
+        run: echo "Finished Nextjs Test"
+
+  container-image-build-and-push-golang:
+    needs: testing-backend-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start message
+        run: echo "Starting Build and Push Container Image"
 
       - uses: actions/checkout@v3
 
@@ -27,8 +96,46 @@ jobs:
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/**') }}
+          path: /tmp/.buildx-cache/backend
+          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/backend-app/**') }}
+          restore-keys: |
+            ${{ runner.os }}-oke-app-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Backend App image and Push ghcr
+        uses: docker/build-push-action@v2
+        with:
+          context: oke-app/backend-app
+          file: oke-app/backend-app/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/oke-app-golang:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache/backend
+          cache-to: type=local,dest=/tmp/.buildx-cache/backend,mode=max
+
+  container-image-build-and-push-nextjs:
+    needs: testing-frontent-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start message
+        run: echo "Starting Build and Push Container Image(nextjs)"
+
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache/frontend
+          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/frontend-app/**') }}
           restore-keys: |
             ${{ runner.os }}-oke-app-
 
@@ -42,18 +149,23 @@ jobs:
       - name: Build image and Push ghcr
         uses: docker/build-push-action@v2
         with:
+          context: oke-app/frontend-app
+          file: oke-app/frontend-app/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-      - name: Container Set up for Test
-        run: |
-          docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
-          docker run -d ghcr.io/${{ github.repository }}:${{ github.sha }} -p 8080:8080
-
-      - name: Container Running Test
-        uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
+          tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache/frontend
+          cache-to: type=local,dest=/tmp/.buildx-cache/frontend,mode=max
 
       - name: Finish message
-        run: echo "Finished running OKE GitHub Actions Workflow Demo"
+        run: echo "Finished Build and Push Container Image(nextjs)"
+
+  deploy-to-oke:
+    needs:
+      [
+        container-image-build-and-push-golang,
+        container-image-build-and-push-nextjs,
+      ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to OKE
+        uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
