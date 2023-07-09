@@ -109,7 +109,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Backend App image and Push ghcr
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: oke-app/backend-app
           file: oke-app/backend-app/Dockerfile
@@ -147,7 +147,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image and Push ghcr
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: oke-app/frontend-app
           file: oke-app/frontend-app/Dockerfile
