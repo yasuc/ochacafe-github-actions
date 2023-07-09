@@ -3,7 +3,7 @@ name: Simple Demo
 on:
   push:
     paths:
-      - "go-app/*"
+      - "go-app/**"
   workflow_dispatch:
 
 jobs:

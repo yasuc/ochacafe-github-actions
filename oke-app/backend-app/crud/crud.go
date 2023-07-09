@@ -15,7 +15,7 @@ func GetItems() []repo.Items {
 	items := []repo.Items{}
 	db, err := gorm.Open(mysql.Open(dbInfo), &gorm.Config{})
 	if err != nil {
-		panic("Failed to open database")
+		panic("Failed to open the database")
 	}
 	result := db.Find(&items)
 	if result.Error != nil {

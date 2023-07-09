@@ -3,7 +3,7 @@ name: OKE GitHub Actions Workflow Demo
 on:
   push:
     paths:
-      - "oke-app/*"
+      - "oke-app/**"
   workflow_dispatch:
 
 jobs:
