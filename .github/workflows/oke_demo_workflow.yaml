@@ -47,7 +47,7 @@ jobs:
 
       - name: Run Test and Check Result
         run: |
-          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/items`
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/items`
           if [ $CODE -eq 200 ]; then
           echo "Success"
           else
@@ -76,7 +76,7 @@ jobs:
 
       - name: Run Test
         run: |
-          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:3000`
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3000`
 
       - name: Check Test Result
         run: |
