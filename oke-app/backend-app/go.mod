@@ -1,4 +1,4 @@
-module github.com/tniita/ochacafe-github-actions/oke-app
+module github.com/tniita/ochacafe-github-actions/oke-app/backend-app
 
 go 1.20
 
