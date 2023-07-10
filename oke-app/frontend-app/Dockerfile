@@ -3,7 +3,7 @@ FROM node:20 AS builder
 WORKDIR /app
 COPY package*.json ./
 COPY . .
-RUN npm run build
+RUN npm install && npm run build
 
 FROM node:20.3-slim AS runner
 ENV NODE_ENV=production
