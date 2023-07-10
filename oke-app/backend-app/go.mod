@@ -1,4 +1,4 @@
-module github.com/tniita/ochacafe-github-actions
+module github.com/tniita/ochacafe-github-actions/oke-app
 
 go 1.20
 

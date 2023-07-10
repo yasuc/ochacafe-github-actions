@@ -23,7 +23,6 @@ func GetItems() []repo.Items {
 	}
 	return items
 }
-
 func GetItemById(id string) repo.Items {
 	dbInfo := db.GetDbInfo()
 	item := repo.Items{}
