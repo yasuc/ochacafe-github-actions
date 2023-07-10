@@ -90,7 +90,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache/backend
-          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/backend-app/**') }}
+          key: ${{ runner.os }}-oke-app-backend-${{ hashFiles('oke-app/backend-app/**') }}
           restore-keys: |
             ${{ runner.os }}-oke-app-
 
@@ -108,8 +108,8 @@ jobs:
           file: oke-app/backend-app/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/oke-app-golang:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache/backend
-          cache-to: type=local,dest=/tmp/.buildx-cache/backend,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   container-image-build-and-push-nextjs:
     needs: testing-job
@@ -128,7 +128,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache/frontend
-          key: ${{ runner.os }}-oke-app-${{ hashFiles('oke-app/frontend-app/**') }}
+          key: ${{ runner.os }}-oke-app-frontend-${{ hashFiles('oke-app/frontend-app/**') }}
           restore-keys: |
             ${{ runner.os }}-oke-app-
 
@@ -146,8 +146,8 @@ jobs:
           file: oke-app/frontend-app/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache/frontend
-          cache-to: type=local,dest=/tmp/.buildx-cache/frontend,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Finish message
         run: echo "Finished Build and Push Container Image(nextjs)"
