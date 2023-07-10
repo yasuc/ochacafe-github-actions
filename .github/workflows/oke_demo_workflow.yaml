@@ -38,7 +38,7 @@ jobs:
       - name: Run
         run: |
           cd oke-app/backend-app
-          DB_USER=root DB_PASSWORD=root DB_HOST=localhost DB_NAME=test_db go run main.go
+          DB_USER=root DB_PASSWORD=root DB_HOST=localhost DB_NAME=test_db go run main.go &
         env:
           DB_USER: root
           DB_PASSWORD: root
