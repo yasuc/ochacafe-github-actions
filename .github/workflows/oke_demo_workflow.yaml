@@ -40,15 +40,15 @@ jobs:
           cd oke-app/backend-app
           go run main.go &
         env:
-          DB_USER: test
-          DB_PASSWORD: password
-          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_HOST: localhost
           DB_NAME: test_db
 
+      # curl叩くだけ
       - name: Run Test and Check Result
         run: |
-          CODE=`curl "http://127.0.0.1:8080/items" -s -o /dev/null -w "%{http_code}"`
-          echo $CODE
+          `curl "http://127.0.0.1:8080/items" -s -o /dev/null -w "%{http_code}"`
 
       - name: Finish message
         run: echo "Finished Golang Test"
@@ -69,10 +69,10 @@ jobs:
           npm install
           npm run dev &
 
+      # curl叩くだけ
       - name: Run Test and Check Result
         run: |
-          CODE=`curl "http://127.0.0.1:3000" -s -o /dev/null -w "%{http_code}"`
-          echo $CODE
+          `curl "http://127.0.0.1:3000" -s -o /dev/null -w "%{http_code}"`
 
       - name: Finish message
         run: echo "Finished Nextjs Test"
