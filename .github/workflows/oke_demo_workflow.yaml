@@ -38,21 +38,18 @@ jobs:
       - name: Run
         run: |
           cd oke-app/backend-app
-          go run main.go
+          go run main.go &
         env:
           DB_USER: test
           DB_PASSWORD: password
           DB_HOST: 127.0.0.1
           DB_NAME: test_db
 
-      - name: Run Test
+      - name: Run Test and Check Result
         run: |
           CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/items`
-
-      - name: Check Test Result
-        run: |
           if [ $CODE -eq 200 ]; then
-            echo "Success"
+          echo "Success"
           else
             echo "Failed"
             exit 1
