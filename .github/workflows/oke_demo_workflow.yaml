@@ -109,7 +109,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/oke-app-golang:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache/backend
-          cache-to: type=local,dest=/tmp/.buildx-cache/backend,mode=max
+          cache-to: type=local,dest=/tmp/.buildx-cache-new/backend,mode=max
 
       # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
       - name: Move cache
@@ -153,7 +153,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache/frontend
-          cache-to: type=local,dest=/tmp/.buildx-cache/frontend,mode=max
+          cache-to: type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max
 
       # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
       - name: Move cache
