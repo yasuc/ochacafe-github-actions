@@ -1,4 +1,4 @@
-module github.com/tniita/ochacage-github-actions
+module github.com/tniita/ochacafe-github-actions
 
 go 1.20
 
