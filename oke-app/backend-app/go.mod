@@ -1,4 +1,4 @@
-module github.com/tniita/go-backend-mysql
+module github.com/tniita/ochacage-github-actions
 
 go 1.20
 

@@ -6,8 +6,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/tniita/go-backend-mysql/db"
-	"github.com/tniita/go-backend-mysql/repo"
+	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/repo"
+	"github.com/tniita/ochacage-github-actions/oke-app/backend-app/db"
 )
 
 func GetItems() []repo.Items {

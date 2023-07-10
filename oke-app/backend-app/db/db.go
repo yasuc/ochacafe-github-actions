@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/tniita/go-backend-mysql/repo"
+	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/repo"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
