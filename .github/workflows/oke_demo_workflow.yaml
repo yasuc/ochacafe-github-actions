@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  testing-backend-job:
+  testing-job:
     runs-on: ubuntu-latest
 
     services:
@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Start message
-        run: echo "Starting Golang Test"
+        run: echo "Starting Tests"
 
       - uses: actions/checkout@v3
         name: Checkout
@@ -46,23 +46,15 @@ jobs:
           DB_HOST: localhost
           DB_NAME: test_db
 
-      # curlで叩くだけ
       - name: Run Test and Check Result
         run: |
-          curl http://127.0.0.1:8080/items
-
-      - name: Finish message
-        run: echo "Finished Golang Test"
-
-  testing-frontent-job:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Start message
-        run: echo "Starting Nextjs Test"
-
-      - uses: actions/checkout@v3
-        name: Checkout
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/items`
+          if [ $CODE -eq 200 ]; then
+          echo "Success"
+          else
+            echo "Failed"
+            exit 1
+          fi
 
       - name: Run
         run: |
@@ -70,16 +62,21 @@ jobs:
           npm install
           npm run dev &
 
-      # curlで叩くだけ
       - name: Run Test and Check Result
         run: |
-          curl http://127.0.0.1:3000"
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:3000`
+          if [ $CODE -eq 200 ]; then
+          echo "Success"
+          else
+            echo "Failed"
+            exit 1
+          fi
 
       - name: Finish message
-        run: echo "Finished Nextjs Test"
+        run: echo "Finished Tests"
 
   container-image-build-and-push-golang:
-    needs: testing-backend-job
+    needs: testing-job
     runs-on: ubuntu-latest
 
     steps:
@@ -117,7 +114,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache/backend,mode=max
 
   container-image-build-and-push-nextjs:
-    needs: testing-frontent-job
+    needs: testing-job
     runs-on: ubuntu-latest
 
     steps:
