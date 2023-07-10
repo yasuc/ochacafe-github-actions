@@ -23,7 +23,7 @@ const columns = [
   }
 ];
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const res = await fetch("http://" + process.env.API_URL + "/items")
   const data = await res.json()
   return {
