@@ -11,10 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      redis:
+      mysql:
         image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: test
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: test_db
+          TZ: "Asia/Tokyo"
         ports:
           - 3306:3306
+        options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 20s --health-timeout 10s --health-retries 10
 
     steps:
       - name: Start message
@@ -32,6 +39,11 @@ jobs:
         run: |
           cd oke-app/backend-app
           go run main.go
+        env:
+          DB_USER: test
+          DB_PASSWORD: password
+          DB_HOST: 127.0.0.1
+          DB_NAME: test_db
 
       - name: Run Test
         run: |
@@ -63,7 +75,7 @@ jobs:
         run: |
           cd oke-app/frontend-app
           npm install
-          npm run dev
+          npm run dev &
 
       - name: Run Test
         run: |
