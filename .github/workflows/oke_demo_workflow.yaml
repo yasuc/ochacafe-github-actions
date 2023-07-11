@@ -165,7 +165,7 @@ jobs:
         run: echo "Finished Build and Push Container Image(nextjs)"
 
   deploy-to-oke:
-    uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
+    uses: oracle-japan/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
     needs:
       [
         container-image-build-and-push-golang,
