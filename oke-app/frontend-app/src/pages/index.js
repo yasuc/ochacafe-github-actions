@@ -21,7 +21,7 @@ const columns = [
     key: 'Presenters',
     dataIndex: 'Presenters',
   }
-]
+];
 
 export async function getServerSideProps() {
   const res = await fetch("http://" + process.env.API_URL + "/items")
