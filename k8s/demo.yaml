@@ -55,6 +55,8 @@ spec:
               value: github-actions-demo-backend:8080
             - name: NEXT_PUBLIC_API_URL
               value: github-actions-demo-backend:8080
+      imagePullSecrets:
+        - name: regcred
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -100,3 +102,5 @@ spec:
                   key: host
             - name: DB_NAME
               value: mydb
+      imagePullSecrets:
+        - name: regcred
