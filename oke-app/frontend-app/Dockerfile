@@ -1,11 +1,11 @@
-FROM node:18 AS builder
+FROM node:16 AS builder
 
 WORKDIR /app
 COPY package*.json ./
 COPY . .
 RUN npm install && npm run build
 
-FROM node:18-slim AS runner
+FROM node:16-slim AS runner
 ENV NODE_ENV=production
 
 WORKDIR /app
