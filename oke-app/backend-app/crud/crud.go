@@ -3,11 +3,10 @@ package crud
 import (
 	"log"
 
+	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/db"
+	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/repo"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/db"
-	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/repo"
 )
 
 func GetItems() []repo.Items {

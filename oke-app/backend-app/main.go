@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/db"
-	"github.com/tniita/ochacafe-github-actions/oke-app/backend-app/http"
+	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/db"
+	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/http"
 )
 
 func main() {
