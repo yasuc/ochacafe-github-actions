@@ -107,7 +107,7 @@ jobs:
           context: oke-app/backend-app
           file: oke-app/backend-app/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/oke-app-golang:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}/oke-app-golang:latest
           cache-from: type=local,src=/tmp/.buildx-cache/backend
           cache-to: type=local,dest=/tmp/.buildx-cache-new/backend,mode=max
 
@@ -151,7 +151,7 @@ jobs:
           context: oke-app/frontend-app
           file: oke-app/frontend-app/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:latest
           cache-from: type=local,src=/tmp/.buildx-cache/frontend
           cache-to: type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max
 
