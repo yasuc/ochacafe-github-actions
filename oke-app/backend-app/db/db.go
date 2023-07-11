@@ -44,7 +44,7 @@ func SetupDB() {
 			Presenters: "Shuhei Kawamura",
 		},
 		{
-			Name:       "GitHub Actions を使いこなせ！",
+			Name:       "GitHub Actionsを使いこなせ！",
 			Date:       time.Date(2023, 8, 9, 19, 00, 00, 000000, time.UTC).Format("20060102150405"),
 			Topics:     "GitHub Actions",
 			Presenters: "Takuya Niita",
