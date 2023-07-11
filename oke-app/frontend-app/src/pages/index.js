@@ -38,7 +38,7 @@ export default function Home({ data }) {
   return (
     <>
       <h1>OCHaCafe Season7 Demo App</h1>
-      <Table dataSource={data} columns={columns} />;
+      <Table dataSource={data} columns={columns} />
     </>
   )
 }
