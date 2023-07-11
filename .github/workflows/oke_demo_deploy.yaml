@@ -18,13 +18,17 @@ jobs:
       - name: Start message
         run: echo "Welcome to OKE GitHub Actions Deploy Demo"
 
+      - uses: actions/checkout@v3
+        name: Checkout
+
       - name: Configure Kubectl for Oracle Container Engine for Kubernetes (OKE)
         uses: oracle-actions/configure-kubectl-oke@v1.3.2
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
 
       - name: Run Kubectl
-        run: kubectl get nodes -A
+        run: |
+          kubectl apply -f k8s/demo.yaml
 
       - name: Finish message
         run: echo "Finished running OKE GitHub Actions Deploy Demo"
