@@ -1,79 +1,102 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name:  github-actions-demo=lb
+  name: github-actions-demo-lb
 spec:
   selector:
-    app:  frontend
-  type:  LoadBalancer
+    app: frontend
+  type: LoadBalancer
   ports:
-  - name:  http
-    port:  80
-    targetPort:  3000
+    - name: http
+      port: 80
+      targetPort: 3000
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name:  github-actions-demo-backend
+  name: github-actions-demo-backend
 spec:
   selector:
-    app:  backend
-  type:  ClusterIP
+    app: backend
+  type: ClusterIP
   ports:
-  - name:  http
-    port:  8080
-    targetPort:  8080
+    - name: http
+      port: 8080
+      targetPort: 8080
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name:  github-actions-demo-frontend
+  name: github-actions-demo-frontend
 spec:
-  replicas:  1
+  replicas: 1
   selector:
     matchLabels:
-      app:  frontend
+      app: frontend
   template:
     metadata:
       labels:
-        app:  frontend
+        app: frontend
     spec:
       containers:
-      - name:  github-actions-demo-frontend
-        image:  ghcr.io/tniita/ochacafe-github-actions/oke-app-golang:latest
-        ports:
-        - containerPort:  3000
-        resources:
-          requests:
-            cpu:  200m
-            memory:  100Mi
-          limits:
-            cpu:  200m
-            memory:  100Mi
+        - name: github-actions-demo-frontend
+          image: ghcr.io/tniita/ochacafe-github-actions/oke-app-nextjs:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 200m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 100Mi
+          env:
+            - name: API_URL
+              value: github-actions-demo-backend:8080
+            - name: NEXT_PUBLIC_API_URL
+              value: github-actions-demo-backend:8080
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name:  github-actions-demo-backend
+  name: github-actions-demo-backend
 spec:
-  replicas:  1
+  replicas: 1
   selector:
     matchLabels:
-      app:  backend
+      app: backend
   template:
     metadata:
       labels:
-        app:  backend
+        app: backend
     spec:
       containers:
-      - name:  github-actions-demo-backend
-        image:  ghcr.io/tniita/ochacafe-github-actions/oke-app-nextjs:latest
-        ports:
-        - containerPort:  8080
-        resources:
-          requests:
-            cpu:  200m
-            memory:  100Mi
-          limits:
-            cpu:  200m
-            memory:  100Mi
+        - name: github-actions-demo-backend
+          image: ghcr.io/tniita/ochacafe-github-actions/oke-app-golang:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 200m
+              memory: 100Mi
+            limits:
+              cpu: 200m
+              memory: 100Mi
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: host
+            - name: DB_NAME
+              value: mydb
