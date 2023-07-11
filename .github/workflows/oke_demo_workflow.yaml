@@ -171,3 +171,5 @@ jobs:
         container-image-build-and-push-golang,
         container-image-build-and-push-nextjs,
       ]
+    # Reusable Workflowは呼び出し元からSecretを渡す必要があるので、継承設定を記載
+    secrets: inherit
