@@ -8,11 +8,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      User: ${{ secrets.OCI_CLI_USER }}
-      Tenancy: ${{ secrets.OCI_CLI_TENANCY }}
-      Fingerprint: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      KeyContent: ${{ secrets.OCI_CLI_KEY_CONTENT }}
-      RegionId: ${{ secrets.OCI_CLI_REGION }}
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
 
     steps:
       - name: Start message
