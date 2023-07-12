@@ -1,0 +1,27 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: runner-demo-oke
+  namespace: actions-runner-system
+spec:
+  replicas: 5
+  template:
+    spec:
+      repository: tniita/ochacafe-github-actions
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: oke-autoscaler
+  namespace: actions-runner-system
+spec:
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: runner-demo-oke
+  minReplicas: 3
+  maxReplicas: 10
+  scaleDownDelaySecondsAfterScaleOut: 300
+  metrics:
+    - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+      repositoryNames:
+        - tniita/ochacafe-github-actions
