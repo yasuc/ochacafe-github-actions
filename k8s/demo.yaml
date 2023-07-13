@@ -47,9 +47,6 @@ spec:
             requests:
               cpu: 200m
               memory: 100Mi
-            limits:
-              cpu: 200m
-              memory: 100Mi
           env:
             - name: API_URL
               value: github-actions-demo-backend:8080
@@ -79,9 +76,6 @@ spec:
             - containerPort: 8080
           resources:
             requests:
-              cpu: 200m
-              memory: 100Mi
-            limits:
               cpu: 200m
               memory: 100Mi
           env:
