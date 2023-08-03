@@ -85,7 +85,19 @@ GitHub上部の`Settings`をクリックします。
 
 #### MySQL Database Serviceのプロビジョニング
 
+以降のサンプルアプリケーションで利用するMySQL Database Serviceをプロビジョニングします。  
+プロビジョニングは[チュートリアル](https://oracle-japan.github.io/ocitutorials/beginners/creating-mds/)をご確認ください。  
+なお、プロビジョニングに利用するVCNはOKEと同一のVCNを利用してください。  
 
+プロビジョニング時に指定した`ユーザ名`、`パスワード`、`IPアドレス`をメモしておきます。  
+
+以下のコマンドでMySQL Database Serviceに接続するためのKubernetes Secretをdefault namespaceに作成します。  
+
+```sh
+kubectl create secret generic db-secret --from-literal=username=<ユーザ名> --from-literal=password=<パスワード> --from-literal=host=<IPアドレス>
+```
+
+これでMySQL Database Serviceのプロビジョニングは完了です。  
 
 #### 動作確認
 
@@ -215,7 +227,7 @@ Pushすると、GitHub Actionsが動作します。
 		{
 			Name:       "セキュアなWeb APIの作り方",
 			Date:       time.Date(2023, 9, 6, 19, 00, 00, 000000, time.UTC).Format("20060102150405"),
-			Topics:     "Keycloak, cert-manager",
+		    Topics:     "Keycloak, cert-manager",
 			Presenters: "Shuhei Kawamura",
 		},
 		{
@@ -243,9 +255,30 @@ Pushすると、GitHub Actionsが動作します。
 		},
 ```
 
-Pushします。  
+Pushすると、GitHub Actionsが動作します。  
 
-### Actions Runnner Controller利用手順
+![img/08.png](img/08.png)
+
+デプロイされると以下のようなアプリケーションがOKEにデプロイされます。  
+
+![img/09.png](img/09.png)
+
+ビルドされたコンテナはGitHub PackagesにPushされているので、以下で確認できます。　　
+
+![img/010.png](img/010.png)
+
+コンテナイメージなどのCacheについては以下から確認できます。  
+
+![img/011.png](img/011.png)
+
+これで`GitHub Actions Workflow Demo`のデモは完了です。  
+
+### [option]Actions Runnner Controller利用手順
+
+ここでは、Actions Runnner Controllerを利用する手順を説明します。  
+
+
+
 
 
 
