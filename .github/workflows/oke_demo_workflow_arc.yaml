@@ -1,4 +1,4 @@
-name: OKE GitHub Actions Workflow Demo
+name: OKE GitHub Actions Workflow ARC Demo
 
 on:
   workflow_dispatch:
