@@ -195,7 +195,7 @@ Pushすると、GitHub Actionsが動作します。
 4つのジョブから構成されています。
 
 ジョブ1:**マトリクス戦略**により、Goの3バージョンで並列に実行、MySQLの**サービスコンテナ**を利用してテストを実施  
-ジョブ2,ジョブ3: 並列にGoアプリとNext.jsアプリのコンテナイメージをビルドし、**GitHub Packages**の一部であるGitHub Container RegistryにPush、ビルドの際には**Cache**を利用してビルド時間を短縮
+ジョブ2,ジョブ3: 並列にGoアプリとNext.jsアプリのコンテナイメージをビルドし、**GitHub Packages**の一部であるGitHub Container RegistryにPush、ビルドの際には**Cache**を利用してビルド時間を短縮  
 ジョブ4: **Reusable Workflow**として実行、**GitHub Secrets**に格納された情報をもとにOracle Container Engine for Kubernetesにアプリをデプロイ
 
 `GitHub Actions Workflow Demo`は`oke-app`配下のいずれかのファイルの更新によりトリガーされます。  
