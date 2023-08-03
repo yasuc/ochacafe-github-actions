@@ -330,20 +330,6 @@ spec:
           memory: "4Gi"
 ```
 
-GitHub Actionsの定義ファイル(YAMLファイル)ではこちらのラベルを利用します。
-`.github/workflows/oke_demo_workflow.yaml`と`.github/workflows/oke_demo_deploy.yaml`をそれぞれ変更します。  
-
-```yaml
-jobs:
-  testing-job:
-    runs-on: runnner-demo-oke　 # 各Jobの`runs-on`を`runnner-demo-oke`に変更
-    strategy:
-      matrix:
-        go-version: ["1.18", "1.19", "1.20"]
-```
-
-これで準備完了です。  
-
 今回は、手動で`OKE GitHub Actions Workflow ARC Demo`を実行してください。  
 
 ![img/013.png](img/013.png)
