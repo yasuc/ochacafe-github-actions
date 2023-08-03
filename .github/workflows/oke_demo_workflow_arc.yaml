@@ -1,0 +1,223 @@
+name: OKE GitHub Actions Workflow Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  testing-job:
+    runs-on: runner-demo-oke
+    strategy:
+      matrix:
+        go-version: ["1.18", "1.19", "1.20"]
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: test
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: test_db
+          TZ: "Asia/Tokyo"
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 20s --health-timeout 10s --health-retries 10
+
+    steps:
+      - name: Start message
+        run: echo "Starting Tests"
+
+      - uses: actions/checkout@v3
+        name: Checkout
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          check-latest: true
+          cache-dependency-path: oke-app/backend-app/go.sum
+          go-version: ${{ matrix.go-version }}
+
+      - name: Run
+        run: |
+          cd oke-app/backend-app
+          CGO_ENABLED=0 GOOS=linux go build -o demo-app
+          ./demo-app &
+        env:
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_HOST: localhost
+          DB_NAME: test_db
+
+      - name: Run Test and Check Result
+        run: |
+          CODE=`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/items`
+          if [ $CODE -eq 200 ]; then
+          echo "Success"
+          else
+            echo "Failed"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Run
+        run: |
+          cd oke-app/frontend-app
+          npm install
+          npm run dev &
+        env:
+          API_URL: localhost:8080
+          NEXT_PUBLIC_API_URL: localhost:8080
+
+      # 確認のためにcurlで叩くだけ
+      - name: Run Test and Check Result
+        run: |
+          curl http://localhost:3000
+
+      - name: Finish message
+        run: echo "Finished Tests"
+
+  container-image-build-and-push-golang:
+    needs: testing-job
+    runs-on: runner-demo-oke
+
+    steps:
+      - name: Start message
+        run: echo "Starting Build and Push Container Image"
+
+      - uses: actions/checkout@v3
+
+      # TCPで接続しているdockerの場合だと以下のエラーが出るっぽい？のでその対策
+      # ERROR: could not create a builder instance with TLS data loaded from environment.
+      # Please use `docker context create <context-name>` to create a context for current environment and then create a builder instance with `docker buildx create <context-name>`
+      - name: Setup docker context
+        run: docker context create actions_context
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          endpoint: actions_context
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache/backend
+          key: ${{ runner.os }}-oke-app-backend-${{ hashFiles('oke-app/backend-app/**') }}
+          restore-keys: |
+            ${{ runner.os }}-oke-app-backend-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Backend App image and Push ghcr
+        uses: docker/build-push-action@v4
+        with:
+          context: oke-app/backend-app
+          file: oke-app/backend-app/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/oke-app-golang:latest
+          cache-from: type=local,src=/tmp/.buildx-cache/backend
+          cache-to: type=local,dest=/tmp/.buildx-cache-new/backend,mode=max
+
+      # GitHub Actions用のcache設定もある、ただし、Experimental
+      # この場合はactions/cache@v3は不要
+      # - name: Build Backend App image and Push ghcr
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: oke-app/backend-app
+      #     file: oke-app/backend-app/Dockerfile
+      #     push: true
+      #     tags: ghcr.io/${{ github.repository }}/oke-app-golang:latest
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+
+      # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
+      # type=ghaの場合は不要
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  container-image-build-and-push-nextjs:
+    needs: testing-job
+    runs-on: runner-demo-oke
+
+    steps:
+      - name: Start message
+        run: echo "Starting Build and Push Container Image(nextjs)"
+
+      - uses: actions/checkout@v3
+
+      # TCPで接続しているdockerの場合だと以下のエラーが出るっぽい？のでその対策
+      # ERROR: could not create a builder instance with TLS data loaded from environment.
+      # Please use `docker context create <context-name>` to create a context for current environment and then create a builder instance with `docker buildx create <context-name>`
+      - name: Setup docker context
+        run: docker context create actions_context
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          endpoint: actions_context
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache/frontend
+          key: ${{ runner.os }}-oke-app-frontend-${{ hashFiles('oke-app/frontend-app/**') }}
+          restore-keys: |
+            ${{ runner.os }}-oke-app-frontend-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image and Push ghcr
+        uses: docker/build-push-action@v4
+        with:
+          context: oke-app/frontend-app
+          file: oke-app/frontend-app/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:latest
+          cache-from: type=local,src=/tmp/.buildx-cache/frontend
+          cache-to: type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max
+
+      # GitHub Actions用のcache設定もある、ただし、Experimental
+      # この場合はactions/cache@v3は不要
+      # - name: Build image and Push ghcr
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: oke-app/frontend-app
+      #     file: oke-app/frontend-app/Dockerfile
+      #     push: true
+      #     tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:latest
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+
+      # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
+      # type=ghaの場合は不要
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+      - name: Finish message
+        run: echo "Finished Build and Push Container Image(nextjs)"
+
+  deploy-to-oke:
+    uses: tniita/ochacafe-github-actions/.github/workflows/oke_demo_deploy.yaml@main
+    needs:
+      [
+        container-image-build-and-push-golang,
+        container-image-build-and-push-nextjs,
+      ]
+    # Reusable Workflowは呼び出し元からSecretを渡す必要があるので、継承設定を記載
+    secrets: inherit
