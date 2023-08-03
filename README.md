@@ -277,6 +277,83 @@ Pushすると、GitHub Actionsが動作します。
 
 ここでは、Actions Runnner Controllerを利用する手順を説明します。  
 
+> **Warning**
+> この手順を実施する場合はセキュリティ確保のため、必ずプライベートレポジトリで実施してください。
+
+Actions Runnner Controllerを利用する場合は、事前準備として[こちら](https://github.com/actions/actions-runner-controller/blob/master/docs/authenticating-to-the-github-api.md)を実施してください。  
+
+以下のManifestをデプロイします。  
+
+```sh
+kubectl apply -f k8s/arc.yaml
+```
+
+デプロイすると以下のようにPodが作成されます。  
+
+```yaml
+$ kubectl get pods -n actions-runner-system cert-manager default
+NAMESPACE               NAME                                            READY   STATUS    RESTARTS        AGE
+actions-runner-system   controller-manager-5f468ff884-hl6pp             2/2     Running   2 (2d14h ago)   10d
+cert-manager            cert-manager-bfcd95fbc-h9n77                    1/1     Running   0               10d
+cert-manager            cert-manager-cainjector-6c65c9f988-d49q2        1/1     Running   0               10d
+cert-manager            cert-manager-webhook-78b75fb78f-jtclh           1/1     Running   0               10d
+default                 runner-demo-oke-x8hvx-4nttd                     2/2     Running   0               10d
+default                 runner-demo-oke-x8hvx-fjxsz                     2/2     Running   0               10d
+default                 runner-demo-oke-x8hvx-q6s7z                     2/2     Running   0               10d
+```
+
+`runner-demo-oke-xxx`がそれぞれGitHub Actionsのランナーの役割を果たすPodです。 
+
+これはGitHubのUIからでも確認できます。  
+
+![img/012.png](img/012.png)
+
+上記でデプロイしたManifestでは、`runnner-demo-oke`というラベルを付与しています。    
+
+```yaml
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: runner-demo-oke
+spec:
+  template:
+    spec:
+      repository: tniita/ochacafe-github-actions
+      labels:
+        - runner-demo-oke
+      resources:
+        limits:
+          cpu: "1.0"
+          memory: "4Gi"
+        requests:
+          cpu: "1.0"
+          memory: "4Gi"
+```
+
+GitHub Actionsの定義ファイル(YAMLファイル)ではこちらのラベルを利用します。
+`.github/workflows/oke_demo_workflow.yaml`と`.github/workflows/oke_demo_deploy.yaml`をそれぞれ変更します。  
+
+```yaml
+jobs:
+  testing-job:
+    runs-on: runnner-demo-oke　 # 各Jobの`runs-on`を`runnner-demo-oke`に変更
+    strategy:
+      matrix:
+        go-version: ["1.18", "1.19", "1.20"]
+```
+
+これで準備完了です。  
+
+今回は、手動で`OKE GitHub Actions Workflow Demo`を実行してください。  
+
+![img/013.png](img/013.png)
+
+JobがOKEのPodで実行されていることが確認できます。
+
+![img/014.png](img/014.png)
+
+![img/015.png](img/015.png)
+
 
 
 
