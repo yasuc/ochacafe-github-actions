@@ -116,7 +116,20 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache/backend
           cache-to: type=local,dest=/tmp/.buildx-cache-new/backend,mode=max
 
+      # GitHub Actions用のcache設定もある、ただし、Experimental
+      # この場合はactions/cache@v3は不要
+      # - name: Build Backend App image and Push ghcr
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: oke-app/backend-app
+      #     file: oke-app/backend-app/Dockerfile
+      #     push: true
+      #     tags: ghcr.io/${{ github.repository }}/oke-app-golang:latest
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+
       # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
+      # type=ghaの場合は不要
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -160,7 +173,20 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache/frontend
           cache-to: type=local,dest=/tmp/.buildx-cache-new/frontend,mode=max
 
+      # GitHub Actions用のcache設定もある、ただし、Experimental
+      # この場合はactions/cache@v3は不要
+      # - name: Build image and Push ghcr
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: oke-app/frontend-app
+      #     file: oke-app/frontend-app/Dockerfile
+      #     push: true
+      #     tags: ghcr.io/${{ github.repository }}/oke-app-nextjs:latest
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
+
       # Docker Buildxは上書きだと肥大化するので、一旦削除して新しいものを移動する
+      # type=ghaの場合は不要
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache

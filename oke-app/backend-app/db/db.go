@@ -51,7 +51,7 @@ func SetupDB() {
 		},
 		{
 			Name:       "セキュアなWeb APIの作り方",
-			Date:       "TBD",
+			Date:       time.Date(2023, 9, 6, 19, 00, 00, 000000, time.UTC).Format("20060102150405"),
 			Topics:     "Keycloak, cert-manager",
 			Presenters: "Shuhei Kawamura",
 		},
