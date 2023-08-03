@@ -344,7 +344,7 @@ jobs:
 
 これで準備完了です。  
 
-今回は、手動で`OKE GitHub Actions Workflow Demo`を実行してください。  
+今回は、手動で`OKE GitHub Actions Workflow ARC Demo`を実行してください。  
 
 ![img/013.png](img/013.png)
 
