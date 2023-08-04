@@ -24,7 +24,7 @@ spec:
   scaleTargetRef:
     kind: RunnerDeployment
     name: runner-demo-oke
-  minReplicas: 5
+  minReplicas: 3
   maxReplicas: 10
   scaleDownDelaySecondsAfterScaleOut: 300
   metrics:
