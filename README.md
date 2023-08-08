@@ -363,6 +363,8 @@ spec:
 
 ```
 
+このManifest内の
+
 ```yaml
           image: ghcr.io/oracle-japan/ochacafe-github-actions/oke-app-nextjs:latest
 ```
