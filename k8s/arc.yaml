@@ -5,7 +5,7 @@ metadata:
 spec:
   template:
     spec:
-      repository: tniita/ochacafe-github-actions
+      repository: <fork先のユーザ名>/ochacafe-github-actions
       labels:
         - runner-demo-oke
       resources:

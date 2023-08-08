@@ -411,7 +411,31 @@ spec:
 
 Actions Runnner Controllerを利用する場合は、事前準備として[こちら](https://github.com/actions/actions-runner-controller/blob/master/docs/authenticating-to-the-github-api.md)を実施してください。  
 
-以下のManifestをデプロイします。  
+`k8s/arc.yaml`にActions Runner ControllerのManifestがあります。  
+
+```yaml
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: runner-demo-oke
+spec:
+  template:
+    spec:
+      repository: <fork先のユーザ名>/ochacafe-github-actions
+      labels:
+        - runner-demo-oke
+      resources:
+        limits:
+          cpu: "1.0"
+          memory: "4Gi"
+        requests:
+          cpu: "1.0"
+          memory: "4Gi"
+```
+
+`repository: <fork先のユーザ名>/ochacafe-github-actions`の部分をforkしたご自身のレポジトリ名に合わせてください。  
+
+Manifestをデプロイします。  
 
 ```sh
 kubectl apply -f k8s/arc.yaml
@@ -439,25 +463,9 @@ default                 runner-demo-oke-x8hvx-q6s7z                     2/2     
 
 上記でデプロイしたManifestでは、`runnner-demo-oke`というラベルを付与しています。    
 
-```yaml
-apiVersion: actions.summerwind.dev/v1alpha1
-kind: RunnerDeployment
-metadata:
-  name: runner-demo-oke
-spec:
-  template:
-    spec:
-      repository: tniita/ochacafe-github-actions
-      labels:
-        - runner-demo-oke
-      resources:
-        limits:
-          cpu: "1.0"
-          memory: "4Gi"
-        requests:
-          cpu: "1.0"
-          memory: "4Gi"
-```
+
+
+
 
 今回は、手動で`OKE GitHub Actions Workflow ARC Demo`を実行してください。  
 
