@@ -255,7 +255,134 @@ Pushすると、GitHub Actionsが動作します。
 		},
 ```
 
-Pushすると、GitHub Actionsが動作します。  
+また、今回はGitHub Actions内でビルドしたデモアプリケーションのコンテナイメージをGHCR(GitHub Container Registry)に対してPushしているので、
+Kubernetes Manifestのイメージパスを書き換えます。  
+Kubernetes Manifestは`k8s/demo.yaml`に存在します。  
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: github-actions-demo-lb
+spec:
+  selector:
+    app: frontend
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: github-actions-demo-backend
+spec:
+  selector:
+    app: backend
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: github-actions-demo-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: github-actions-demo-frontend
+          image: ghcr.io/oracle-japan/ochacafe-github-actions/oke-app-nextjs:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 200m
+              memory: 100Mi
+          env:
+            - name: API_URL
+              value: github-actions-demo-backend:8080
+            - name: NEXT_PUBLIC_API_URL
+              value: github-actions-demo-backend:8080
+      imagePullSecrets:
+        - name: regcred
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: github-actions-demo-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: github-actions-demo-backend
+          image: ghcr.io/oracle-japan/ochacafe-github-actions/oke-app-golang:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 200m
+              memory: 100Mi
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: host
+            - name: DB_NAME
+              value: mydb
+      imagePullSecrets:
+        - name: regcred
+
+```
+
+```yaml
+          image: ghcr.io/oracle-japan/ochacafe-github-actions/oke-app-nextjs:latest
+```
+
+```yaml
+          image: ghcr.io/oracle-japan/ochacafe-github-actions/oke-app-golang:latest
+```
+
+上記2つのイメージパスをforkしたレポジトリのオーナーで更新します。  
+例えば、`tniita`というオーナーのレポジトリにforkした場合は、それぞれ以下のようになります。  
+
+```yaml
+          image: ghcr.io/tniita/ochacafe-github-actions/oke-app-nextjs:latest
+```
+
+```yaml
+          image: ghcr.io/tniita/ochacafe-github-actions/oke-app-golang:latest
+```
+
+これらのファイルをPushすると、GitHub Actionsが動作します。  
 
 ![img/08.png](img/08.png)
 
