@@ -8,42 +8,20 @@
 
 ```bash
 .
-├── README.md 
-├── go-app  # Using a Simple Workflow Demo
-│   └── hello-world.go
+├── .github
+│   └── workflows
+│       ├── oke_demo_deploy.yaml # OKE Deploy Workflow for GitHub Hosted Runner
+│       ├── oke_demo_deploy_arc.yaml # OKE Deploy Workflow for Actions Runner Controller
+│       ├── oke_demo_workflow.yaml # GitHub Actions Workflow Demo Workflow for GitHub Hosted Runner
+│       ├── oke_demo_workflow_arc.yaml　 # GitHub Actions Workflow Demo Workflow for Actions Runner Controller
+│       └── simple_demo.yaml # Simple Workflow Demo Workflow
+├── README.md
+├── go-app # Simple Workflow Demo App
 ├── img
-├── k8s # Actions Runnner Controller Manifest
-│   ├── arc.yaml
-│   └── demo.yaml
-└── oke-app # Sample App for GitHub Actions Workflow Demo
-    ├── backend-app
-    │   ├── Dockerfile
-    │   ├── crud
-    │   │   └── crud.go
-    │   ├── db
-    │   │   └── db.go
-    │   ├── go.mod
-    │   ├── go.sum
-    │   ├── http
-    │   │   └── methods.go
-    │   ├── main.go
-    │   └── repo
-    │       └── items.go
-    └── frontend-app
-        ├── Dockerfile
-        ├── README.md
-        ├── jsconfig.json
-        ├── next.config.js
-        ├── package-lock.json
-        ├── package.json
-        └── src
-            └── pages
-                ├── _app.js
-                ├── _document.js
-                ├── _error.js
-                └── index.js
-
-12 directories, 22 files
+├── k8s
+│   ├── arc.yaml  # Actions Runner Controller Manifest
+│   └── demo.yaml  # GitHub Actions Workflow Demo Manifest
+└── oke-app 　 # GitHub Actions Workflow Demo App
 ```
 
 ### GitHub Actions利用手順
@@ -462,10 +440,6 @@ default                 runner-demo-oke-x8hvx-q6s7z                     2/2     
 ![img/012.png](img/012.png)
 
 上記でデプロイしたManifestでは、`runnner-demo-oke`というラベルを付与しています。    
-
-
-
-
 
 今回は、手動で`OKE GitHub Actions Workflow ARC Demo`を実行してください。  
 
