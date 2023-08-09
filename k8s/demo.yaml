@@ -2,6 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: github-actions-demo-lb
+  namespace: demo
 spec:
   selector:
     app: frontend
@@ -15,6 +16,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: github-actions-demo-backend
+  namespace: demo
 spec:
   selector:
     app: backend
@@ -28,6 +30,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: github-actions-demo-frontend
+  namespace: demo
 spec:
   replicas: 1
   selector:
@@ -59,6 +62,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: github-actions-demo-backend
+  namespace: demo
 spec:
   replicas: 1
   selector:
