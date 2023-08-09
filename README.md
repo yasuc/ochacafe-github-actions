@@ -178,6 +178,12 @@ Pushすると、GitHub Actionsが動作します。
 
 `GitHub Actions Workflow Demo`は`oke-app`配下のいずれかのファイルの更新によりトリガーされます。  
 
+まずはデモアプリケーション用のNamespaceを作成しておきます。  
+
+```sh
+kubectl create ns demo
+```
+
 ここでは、`oke-app/backend-app/db/db.go`に定義されたテーブル情報を更新してみましょう。  
 このテーブル情報はアプリ起動時にMySQLに対して書き込みされます。 
 
